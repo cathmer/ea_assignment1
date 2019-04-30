@@ -1,26 +1,32 @@
 
 package geneticalgorithm;
 
+import java.util.Optional;
+
 /**
  *
  * @author Marco Virgolin, with the collaboration of Anton Bouter and Hoang Ngoc Luong and the supervision of Peter A.N. Bosman
  */
 public class FitnessFunction {
 
-    int m, k, d;
+    int m, k;
+    double d;
     long evaluations;
     double optimum;
 
     Individual elite = null;
 
-    FitnessFunction(int m, int k, int d) {
+    FitnessFunction(int m, int k, double d) {
         this.m = m;
         this.k = k;
         this.d = d;
         this.evaluations = 0;
 
-//        this.optimum = m * k;   // TODO: this is the optimum for OneMax, not for your function
-        this.optimum = 8;
+        if (d >= 0.0) {
+            this.optimum = m;
+        } else {
+            this.optimum = m * (1 - d);
+        }
     }
     
     // The purpose of this custom exception is to perform a naughty trick: halt the GA as soon as the optimum is found
