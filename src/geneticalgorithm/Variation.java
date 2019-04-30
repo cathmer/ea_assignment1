@@ -34,10 +34,19 @@ public class Variation {
 
         Individual child1 = parent1.Clone(); // explicit call to clone because otherwise Java copies the reference
         Individual child2 = parent2.Clone();
-        
-        // TODO: This crossover is not doing anything. You must implement it.
+
         // Remember to use the rng in Utilities to sample random numbers, e.g., Utilities.rng.nextDouble();
-        
+
+        for (int i = 0; i < parent1.genotype.length; i++) {
+            if (Utilities.rng.nextBoolean()) {
+                child1.genotype[i] = parent1.genotype[i];
+                child2.genotype[i] = parent2.genotype[i];
+            } else {
+                child1.genotype[i] = parent2.genotype[i];
+                child2.genotype[i] = parent1.genotype[i];
+            }
+        }
+
         ArrayList<Individual> result = new ArrayList<Individual>();
         result.add(child1);
         result.add(child2);
@@ -50,8 +59,19 @@ public class Variation {
         Individual child1 = parent1.Clone();
         Individual child2 = parent2.Clone();
 
-        // TODO: This crossover is not doing anything. You must implement it.
         // Remember to use the rng in Utilities to sample random numbers, e.g., Utilities.rng.nextDouble();
+
+        int crossoverPoint = Utilities.rng.nextInt(parent1.genotype.length - 1);
+
+        for (int i = 0; i < parent1.genotype.length; i++) {
+            if (i >= crossoverPoint) {
+                child1.genotype[i] = parent1.genotype[i];
+                child2.genotype[i] = parent2.genotype[i];
+            } else {
+                child1.genotype[i] = parent2.genotype[i];
+                child2.genotype[i] = parent1.genotype[i];
+            }
+        }
 
         ArrayList<Individual> result = new ArrayList<Individual>();
         result.add(child1);
