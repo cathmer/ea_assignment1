@@ -13,21 +13,34 @@ import java.nio.file.Files;
 public class Launcher {
 
     public static void main(String[] args) throws IOException {
-
-        // termination condition parameters ( 0 or negatives are ignored )
-        long time_limit = 3 * 1000; // in milliseconds
-        int generations_limit = -1;
-        long evaluations_limit = -1;
-
         File directory = new File("experiments");
         if (!directory.exists()) {
             directory.mkdir();
         }
 
-        // TODO: this runs one experiment, you may want to script a pipeline here.
-        int population_size = 100;
-        int m = 8; int k = 5; double d = (double) 1 / k;
-        CrossoverType ct = CrossoverType.OnePoint;
+        int[] m = {1, 2, 4, 8, 16};
+        int[] k = {3, 5, 10};
+        int[] n = {10, 100, 1000, 10000, 100000};
+
+        for (int i = 0; i < m.length; i++) {
+            for (int j = 0; j < k.length; j++) {
+                for (int l = 0; l < n.length; l++) {
+                    runGA(m[i], k[j], (double) 1/k[j], n[l], CrossoverType.Uniform);
+                    runGA(m[i], k[j], (double) 1/k[j], n[l], CrossoverType.OnePoint);
+                    runGA(m[i], k[j], (double) 1 - 1/k[j], n[l], CrossoverType.Uniform);
+                    runGA(m[i], k[j], (double) 1 - 1/k[j], n[l], CrossoverType.OnePoint);
+                }
+            }
+        }
+
+    }
+
+    private static void runGA(int m, int k, double d, int population_size, CrossoverType ct) throws IOException {
+        // termination condition parameters ( 0 or negatives are ignored )
+        long time_limit = 3 * 1000; // in milliseconds
+        int generations_limit = -1;
+        long evaluations_limit = -1;
+
         int i = 0;
         // Set up logging
         String output_file_name = "experiments/log_p" + population_size + "_m" + m + "_k" + k + "_d" + d + "_c" + ct + "_run" + i + ".txt";
@@ -40,11 +53,11 @@ public class Launcher {
         SimpleGeneticAlgorithm ga = new SimpleGeneticAlgorithm(population_size, m, k, d, ct);
         try {
             ga.run(generations_limit, evaluations_limit, time_limit);
-            
+
             System.out.println("Best fitness " + ga.fitness_function.elite.fitness + " found at\n"
                     + "generation\t" + ga.generation + "\nevaluations\t" + ga.fitness_function.evaluations + "\ntime (ms)\t" + (System.currentTimeMillis() - ga.start_time + "\n")
                     + "elite\t\t" + ga.fitness_function.elite.toString());
-            
+
         } catch (FitnessFunction.OptimumFoundCustomException ex) {
             System.out.println("Optimum " + ga.fitness_function.elite.fitness + " found at\n"
                     + "generation\t" + ga.generation + "\nevaluations\t" + ga.fitness_function.evaluations + "\ntime (ms)\t" + (System.currentTimeMillis() - ga.start_time + "\n")
@@ -52,6 +65,5 @@ public class Launcher {
             Utilities.logger.write(ga.generation + " " + ga.fitness_function.evaluations + " " + (System.currentTimeMillis() - ga.start_time) + " " + ga.fitness_function.elite.fitness + "\n");
         }
         Utilities.logger.close();
-
     }
 }
