@@ -19,7 +19,8 @@ public class FitnessFunction {
         this.d = d;
         this.evaluations = 0;
 
-        this.optimum = m * k;   // TODO: this is the optimum for OneMax, not for your function
+//        this.optimum = m * k;   // TODO: this is the optimum for OneMax, not for your function
+        this.optimum = 8;
     }
     
     // The purpose of this custom exception is to perform a naughty trick: halt the GA as soon as the optimum is found
@@ -35,10 +36,15 @@ public class FitnessFunction {
         evaluations++;
         
         // TODO: You have to implement the correct evaluation function. The following is OneMax (counts 1s). Remember to modify the optimum as well.
+
         double result = 0;
 
-        for (int i = 0; i < individual.genotype.length; i++) {
-            result += individual.genotype[i];
+//        for (int i = 0; i < individual.genotype.length; i++) {
+//            result += individual.genotype[i];
+//        }
+
+        for (int i = 0; i < m; i++) {
+            result += fSub(individual, i);
         }
 
         // set the fitness of the individual
@@ -56,6 +62,23 @@ public class FitnessFunction {
         }
     }
 
-    
+    private double fSub(Individual individual, int i) {
+        int ub = sumOfOnes(individual, i * k);
+        if (ub == k) {
+            return 1.0;
+        } else {
+            return (double)(1 - d) * (k - 1 - ub) / (k - 1);
+        }
+    }
+
+    private int sumOfOnes(Individual individual, int startIndex) {
+        int sum = 0;
+
+        for (int i = 0; i < k; i++) {
+            sum += individual.genotype[startIndex + i];
+        }
+
+        return sum;
+    }
 
 }
