@@ -40,14 +40,8 @@ public class FitnessFunction {
     public void Evaluate(Individual individual) throws OptimumFoundCustomException, OptimumFoundCustomException {
 
         evaluations++;
-        
-        // TODO: You have to implement the correct evaluation function. The following is OneMax (counts 1s). Remember to modify the optimum as well.
 
         double result = 0;
-
-//        for (int i = 0; i < individual.genotype.length; i++) {
-//            result += individual.genotype[i];
-//        }
 
         for (int i = 0; i < m; i++) {
             result += fSub(individual, i);
