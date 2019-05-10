@@ -50,7 +50,7 @@ public class Launcher {
 
     private static void runGA(int m, int k, double d, int population_size, CrossoverType ct, BufferedWriter bw) throws IOException {
         // termination condition parameters ( 0 or negatives are ignored )
-        long time_limit = 3 * 1000; // in milliseconds
+        long time_limit = 300 * 1000; // in milliseconds
         int generations_limit = -1;
         long evaluations_limit = -1;
 

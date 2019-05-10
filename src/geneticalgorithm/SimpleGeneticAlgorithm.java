@@ -49,9 +49,12 @@ public class SimpleGeneticAlgorithm {
         // Log generation 0
         Utilities.logger.write(generation+" "+fitness_function.evaluations+" "+(System.currentTimeMillis() - start_time)+" "+fitness_function.elite.fitness+"\n");
 
+        // Add list to hold fitness value of each generation. If they are all the same, the algorithm has likely converged to a local optimum and can be terminated
+        ArrayList<Double> historicFitness = new ArrayList<>();
+
         // L3: Evolutionary loop
-        while (!CheckTerminationCondition(generation_limit, evaluations_limit, time_limit)) {
-            
+        while (!CheckTerminationCondition(generation_limit, evaluations_limit, time_limit, historicFitness)) {
+            historicFitness.add(fitness_function.elite.fitness);
             System.out.println("> Generation "+generation+" - best fitness found: "+fitness_function.elite.fitness);
             
             // L3.1: Prepare offspring
@@ -73,6 +76,7 @@ public class SimpleGeneticAlgorithm {
             p_and_o.addAll(offspring);
             // L3.6 (and follownig): selection
             population = selection.TournamentSelect(p_and_o);
+
             // L3.8: increment generation counter
             generation += 1;
             
@@ -81,7 +85,7 @@ public class SimpleGeneticAlgorithm {
         }
     }
 
-    private boolean CheckTerminationCondition(int generation_limit, long evaluations_limit, long time_limit) {
+    private boolean CheckTerminationCondition(int generation_limit, long evaluations_limit, long time_limit, ArrayList<Double> historicFitness) {
 
         if (generation_limit > 0 && generation >= generation_limit) {
             return true;
@@ -93,7 +97,23 @@ public class SimpleGeneticAlgorithm {
         if (time_limit > 0 && elapsed_time >= time_limit) {
             return true;
         }
-        return false;
+        return fitnessValueHasConverged(historicFitness, 100);
+    }
+
+    private boolean fitnessValueHasConverged(ArrayList<Double> historicFitness, int n) {
+        if (historicFitness.size() < n) {
+            return false;
+        }
+
+        for (int i = historicFitness.size() - n; i < historicFitness.size() - 1; i++) {
+            double value1 = historicFitness.get(i);
+            double value2 = historicFitness.get(i + 1);
+            if (Math.abs(value1 - value2) > 0.001) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
 }
